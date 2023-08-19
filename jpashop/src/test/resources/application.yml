@@ -1,0 +1,19 @@
+#spring: //spring에서 자동으로 memory db 모드로 세팅해서 동작함
+#  datasource:
+#    url: jdbc:h2:mem:test
+#    username: sa
+#    password:
+#    driver-class-name: org.h2.Driver
+#
+#  jpa:
+#    hibernate:
+#      ddl-auto: create
+#    properties:
+#      hibernate:
+##        show_sql: true
+#        format_sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibername.type: trace
