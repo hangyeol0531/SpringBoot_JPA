@@ -16,6 +16,9 @@ public class ItemRepository {
         if (item.getId() == null) {
             em.persist(item);
         } else {
+            /**
+             * 준영속성 entity 업데이트
+             */
             em.merge(item);
         }
     }

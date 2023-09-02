@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
@@ -39,5 +41,46 @@ public class ItemController {
         List<Item> items = itemService.findItems();
         model.addAttribute("items", items);
         return "items/itemList";
+    }
+
+    @GetMapping("/items/{itemId}/edit")
+    public String updateItemForm(
+            @PathVariable("itemId") Long itemId,
+            Model model
+    ) {
+        Book item = (Book) itemService.findOne(itemId);
+
+        BookForm form = new BookForm();
+        form.setId(item.getId());
+        form.setName(item.getName());
+        form.setPrice(item.getPrice());
+        form.setStockQuantity(item.getStockQuantity());
+        form.setAuthor(item.getAuthor());
+        form.setIsbn(item.getIsbn());
+
+        model.addAttribute("form", form);
+        return "items/updateItemForm";
+    }
+
+    @PostMapping("/items/{itemId}/edit")
+    public String updateItem(
+            @PathVariable Long itemId,
+            @ModelAttribute("form") BookForm form
+    ) {
+
+        // 준영속성 Entity
+        // 준영속성 업데이트 방법 -> 1.dirty check, 2. merge
+        // merge 사용 시 변경되지 않거나 명시되지 않는 값은 null로 저장하기에 merge 사용은 지양함
+
+        // Book book = new Book();
+        // book.setId(form.getId());
+        // book.setName(form.getName());
+        // book.setPrice(form.getPrice());
+        // book.setStockQuantity(form.getStockQuantity());
+        // book.setAuthor(form.getAuthor());
+        // book.setIsbn(form.getIsbn());
+
+        itemService.updateItem(itemId, form.getName(), form.getPrice(), form.getStockQuantity());
+        return "redirect:/items";
     }
 }
