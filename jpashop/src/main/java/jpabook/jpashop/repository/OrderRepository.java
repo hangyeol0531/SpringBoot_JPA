@@ -84,4 +84,31 @@ public class OrderRepository {
         ).getResultList();
     }
 
+    /**
+     * 1 : n 에서 fetchjoin + paging 처리하면 메모리에서 처리하기에 사용하면 안된다.
+     */
+    public List<Order> findAllWithItem() {
+        return em.createQuery(
+            "select distinct o from Order o" +
+                    " join fetch o.member m" +
+                    " join fetch o.delivery d" +
+                    " join fetch o.orderItems oi" +
+                    " join fetch oi.item i", Order.class)
+                .getResultList();
+    }
+
+    /**
+     * oneToOne 같은 경우는 네트워크를 보통 fetch로 해결한다. (네트워크를 자주타기 때문에)
+     * toOne 관계는 fetch join으로 쿼리를 줄이고
+     * 나머지는 hibernate.default_batch_fetch_size로 최적화하면 된다.
+     */
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        return em.createQuery(
+                "select o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d", Order.class
+                ).setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
 }
