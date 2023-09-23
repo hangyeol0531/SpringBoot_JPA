@@ -14,7 +14,9 @@ public class OrderQueryRepository {
 
     private final EntityManager em;
 
-
+    /**
+     * DTO로 직접조회하면 query 날릴때 원하는 값만 select 한다는 장점이 있음
+     */
     public List<OrderQueryDto> findOrderQueryDtos() {
         List<OrderQueryDto> result = findOrders();
 
@@ -71,5 +73,17 @@ public class OrderQueryRepository {
                     " join o.member m" +
                     " join o.delivery d", OrderQueryDto.class)
             .getResultList();
+    }
+
+    public List<OrderFlatDto> findAllByDto_flat() {
+        return em.createQuery(
+            "select new" +
+                " jpabook.jpashop.repository.order.query.OrderFlatDto(o.id, m.name, o.orderDate, o.status, d.address, i.name, oi.orderPrice, oi.count)" +
+                " from Order o" +
+                " join o.member m" +
+                " join o.delivery d" +
+                " join o.orderItems oi" +
+                " join oi.item i", OrderFlatDto.class
+        ).getResultList();
     }
 }
