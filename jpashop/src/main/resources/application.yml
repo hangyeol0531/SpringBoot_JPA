@@ -10,9 +10,13 @@ spring:
       ddl-auto: create
     properties:
       hibernate:
-#        show_sql: true
+        #        show_sql: true
         format_sql: true
         default_batch_fetch_size: 100
+    #  OSIV(open session in view)
+    #  true : connection을 고객에게 응답 줄때 반환하기 때문에 connection을 많이 사용하지만 transaction 밖에도 영속성 컨텍스트가 계속 살아있는다.
+    #  false : transaction 안에서만 connection을 유지하기에 connection 반환이 빠르다. 하지만 transaction 밖에서 lazy loading을 하면 err가 난다.
+    open-in-view: false
 
 logging:
   level:
